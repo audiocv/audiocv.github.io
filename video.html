@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thư viện Video - Xem nhanh</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    #videoGrid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .video-thumb {
+      width: 180px;
+      height: 120px;
+      object-fit: cover;
+      border: 2px solid #ccc;
+      cursor: pointer;
+    }
+
+    #popupWindow {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 360px;
+      height: 220px;
+      background-color: #000;
+      display: none;
+      z-index: 1000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    #popupWindow video {
+      width: 100%;
+      height: 100%;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #mainPlayer {
+      display: block;
+      width: 100%;
+      max-width: 800px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎬 Thư viện Video</h2>
+
+  <label>
+    <input type="checkbox" id="togglePopup"> Phát trong cửa sổ nhỏ (popup)
+  </label>
+
+  <div id="videoGrid"></div>
+
+  <video id="mainPlayer" controls>
+    <source id="mainSource" src="" type="video/mp4">
+    Trình duyệt của bạn không hỗ trợ video.
+  </video>
+
+  <div id="popupWindow">
+    <video id="popupPlayer" controls>
+      <source id="popupSource" src="" type="video/mp4">
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+  </div>
+
+  <script>
+    const videoList = [
+"#肌肉男#打桩#超帅颜值超高的.mp4", 
+"#赘婿#巨根#肌肉#猛男哈哈哈这.mp4", 
+"(GAY)Kakashi-dando-uma-surra-do-rola-no-Kabu.mp4", 
+"04225257d053251b0f9a9bfbbc70b50b.mp4", 
+"048d54132ec8c3ab916837e7435a4364.mp4", 
+"07b7688648717faad1b5cd4220150f3a.mp4", 
+"086209249d4b3bdd837367fe28c12183.mp4", 
+"08b26f5387edab863e6b86b063570c04.mp4", 
+"0e0eb2303420b0205662cbbe3909fac8.mp4", 
+"0eee8f6c87452fc90422d2f08bfa1a31.mp4", 
+"1.mp4", 
+"14afe9470e3f042d87fcce5e891253ca.mp4", 
+"15fd5db12db9d39cf8d9d7cca841ef2d.mp4", 
+"187317a8a0d6dd5eeba15419906f540f.mp4", 
+"1f9571778ffaf059d9dd890ca9a2fa04.mp4", 
+"2.mp4", 
+"20200118_104815.mp4", 
+"2112f8b763dfe711f030f12fa8c87086.mp4", 
+"23d8fba6a014e7b4f49518dff812354e.mp4", 
+"265311fe7c5a5c930eac4234452b0941.mp4", 
+"27183f265dec8efa7123499e49ce3418.mp4", 
+"28be1b5779b01cf1cc465545c30a5535.mp4", 
+"2b6c41ad17c759cb7d643b44d8210c01.mp4", 
+"31d1247d6b1986995e810feb7558864a.mp4", 
+"42fad10b47ec32c96091854cbc2bfc24.mp4", 
+"450b48302f8ec439160a5e0c845d7058.mp4", 
+"47c864192b56d0e481795e70a76e7d37.mp4", 
+"4d995cea51f4ee44e056639b2528e675.mp4", 
+"505791d2f25c6dbb54d435ce05cb9deb.mp4", 
+"50d12378939aeb1a82bbfaef43d66493.mp4", 
+"515bdb0bfa77d3aea46dd5a9e37b5b12.mp4", 
+"537145c6cbd4c066a4eb6ce846b601f5.mp4", 
+"55aeba081f1166ebf97a07dba1ff7f94.mp4", 
+"560828d87cfe361325f7284166da8551.mp4", 
+"58871d1ed057ac65979adf9535e3cbb5.mp4", 
+"5e38e88f3943930133f6010a22b2183e.mp4", 
+"5_6064319630963378026.mp4", 
+"5_6336717842833999624.mp4", 
+"5_6336717842833999625.mp4", 
+"5_6336717842833999626.mp4", 
+"5_6336717842833999627.mp4", 
+"601401146e83a20014cc3294c939437d.mp4", 
+"6128EBF2-1168-4227-8BE0-62EB71E71513.mp4", 
+"63b46152d1833259a1a53ee86d49d132.mp4", 
+"66611fde096b9ed2f912d34c0ff18c24.mp4", 
+"6738b453e8ec7f16e816a895852bdacf.mp4", 
+"6c32503f9ba4606a7956f34f227399b4.mp4", 
+"6d85c52d6d310d3f5a9e840afdc47331.mp4", 
+"6debb15db869e95d17d6883603a24209.mp4", 
+"740670d04d2c61f440f61f5430205d55.mp4", 
+"752599f69e318dc0aa446d820b4ce58b.mp4", 
+"765f5e7b053a61a94294695aa03dd301.mp4", 
+"795523978eb83d049806e9dd0a9096e4.mp4", 
+"79CEB3A6-4499-4572-8512-07086134CCCF.mp4", 
+"7b73631e9e8f04ca6be95b3e42a70f47.mp4", 
+"8b033fcd2a2963beb3346c6c43904d09.mp4", 
+"8ee1bf83b36b359542ee65ef911f37d7.mp4", 
+"915e3e68e4c836ffc3a5dc9834e49332.mp4", 
+"91e4a5fc64e13822efc46589b1632868.mp4", 
+"9a3f69a6b7e6d95676f8148e584d2380.mp4", 
+"a31a4bcef799aaaab811d9b77cf40a4f.mp4", 
+"a6b715a110b5c8edb5b36338242eb1fc.mp4", 
+"afacf53e0197eaad1a23f626839430af.mp4", 
+"Anh-nguoi-mau-ngon-hotboy.mp4", 
+"anh-nhan-vien-van-phong.mp4", 
+"Anime-Sex-Orgia-cua-Goblin-Cave_360p.mp4", 
+"Asian-twink-socks白襪chinese台北nike哥.mp4", 
+"b0d62cefadcc80cb0229d4a5b069c5dd.mp4", 
+"b0d9591b5733797e063cb59c8312fb1e.mp4", 
+"b32f02d9ca9b1f9b657c268797a9cc35.mp4", 
+"ba4484913f1af12d82244a014c71f6ef.mp4", 
+"BadHouseGAYBB(1).mp4", 
+"Ban-den-choi-nha-minh.mp4", 
+"bbeb2a9199a268f21788e4200567f337.mp4", 
+"bbf97d3a7fe3ae90fbb7f461d3df14b2.mp4", 
+"bcafb7a59ccab529b11277c964a07082.mp4", 
+"bddade362f77bb957b896d0f3c31e15a.mp4", 
+"bee5d004a40a2cdb91f7bc601df8402e.mp4", 
+"bo-tat-ca-de-den-ben.mp4", 
+"bot-dap-chan-qua-la.mp4", 
+"Bot_kinh_can.mp4", 
+"boy-jeans-du.mp4", 
+"c07f086ebe14fa92e878b9dc61f3b393.mp4", 
+"c56f71d4650e3296eaf579735508895f.mp4", 
+"c882daaa5f88525a995ee2208b526c3f.mp4", 
+"c97d66c13929be7ffa0f7736b7708312.mp4", 
+"ca5a40792a465cafd3ad20585f35e0ef.mp4", 
+"cdit-o-nay-ngoe-the.mp4", 
+"cec170ebd3fb72733494ee6b54016249.mp4", 
+"cf50af164c1f9d575d8d88528573f894.mp4", 
+"Changtraigaybaototnghiep1-DoodStream_0.mp4", 
+"Chi-oi-anh-re-dit-em.mp4", 
+"chiang_gogo-fuck-hailijiang-FullBoys_com.mp4", 
+"chich-cung-ban-than.mp4", 
+"choi-ban-cua-di- PornPloy_0.mp4", 
+"Choi-manh-vao-lol-em-gai-di-lam-ve-muon-PornP.mp4", 
+"Cu-chuoi-dam-dang-du.mp4", 
+"d0bab7bed3b481e0d58751fb35bac911.mp4", 
+"d5691570d46b6cecd121a9e63373aa76.mp4", 
+"d700ddab7af6acca696617c1fd806eeb.mp4", 
+"deb9087481ec3cba879807d6ba498b12.mp4", 
+"dk正太被猛干疯狂喊爸爸千部正太资源打.mp4", 
+"dragon-ball-gay-sex-XNXXVN_CO_0.mp4", 
+"du-voi-anh-trai-xam.mp4", 
+"Du_trai_thang_Bu_ku_tao_di_ko_thay_mat_may_dau.mp4", 
+"e05ee4da443a487eb3fdc2c8709d687d.mp4", 
+"e2c5c7bee8b96cf98e3a228b4b84b11f.mp4", 
+"e62dad8acf485d43a6a8ccdbca0bf974.mp4", 
+"e8b501fe02569f779db21f3f161e7c05.mp4", 
+"ef25f7b0ac50c3a5217125d3e8655346.mp4", 
+"Em-nay-van-chua-bao.mp4", 
+"Emo-big-dildo-Alexander-Syden-and-Josh-Dixon-hi.mp4", 
+"EPORNER-COM-60f8HhM5nml_QQ2511727755.mp4", 
+"f2a34b4fb3e866140a898b6eae87f008.mp4", 
+"f763313e0b330680fd48b0efcb00a23b.mp4", 
+"FB_IMG_1723673064503.mp4", 
+"Fucking-Short-Video-Korean-Movie02-See-in-xy.mp4", 
+"Gabancungban-DoodStream_0.mp4", 
+"Gabancungban-DoodStream_360p.mp4", 
+"Gay-dick-in-pussys-Alexander-Sydenand-Josh-Di.mp4", 
+"Gay-Hentai-Barcelona-XNXXVN_CO_0.mp4", 
+"Gay-sex-threesome-hardcore-XNXXVN_CO_0.mp4", 
+"gifl.mp4", 
+"Gio-nhieu-hotboy-co.mp4", 
+"homemade.mp4", 
+"Hot-boy-khau-trang.mp4", 
+"Hunt-Series-EP15-Jallgone-FullBoys_com.mp4", 
+"IMG_0521.mp4", 
+"IMG_0567.mp4", 
+"IMG_0821.mp4", 
+"IMG_1050.mp4", 
+"IMG_1218.mp4", 
+"IMG_1270.mp4", 
+"IMG_1308.mp4", 
+"IMG_1321.mp4", 
+"IMG_1322.mp4", 
+"IMG_1333.mp4", 
+"IMG_1361.mp4", 
+"IMG_1434.mp4", 
+"IMG_5844.mp4", 
+"IMG_7164.mp4", 
+"IMG_7383.mp4", 
+"IMG_7943.mp4", 
+"IMG_9113.mp4", 
+"IMG_9871.mp4", 
+"IMG_9929.mp4", 
+"Japansex-gay-school-Alexander-Syden-and-Josh-D.mp4", 
+"jjjaewon-fuck-kc881xoxo-FullBoys_com.mp4", 
+"jjjaewon-fuck-narcistt-FullBoys_com.mp4", 
+"korea18.mp4", 
+"korean-PornPloy_360p.mp4", 
+"Latino-Gay-Group-Intense-Anal-Sex.mp4", 
+"Let_s-Not-Beat-Around-The-Bush-And-Fuck-Al-ready.mp4", 
+"lv_0_20220817131241.mp4", 
+"Nay-ba-me-vang-nha.mp4", 
+"nhin-man-dao-dau.mp4", 
+"Nho-beo-so-huong-di.mp4", 
+"Nhoc-bot-sexy.mp4", 
+"Ohh-my-God-Guarante.mp4", 
+"Phe-nung-lol.mp4", 
+"Phim-sex-Diem-Q_4-cuc-hay-Viet69_0.mp4", 
+"Phin-sex-trung-quoc-vietsub-Em-gai-xinh-dep-bi-du.mp4", 
+"Qiaotun-du-em-nguoi-yeu.mp4", 
+"Quan-rach-goi.mp4", 
+"received_1227087934289509.mp4", 
+"received_1234312200300865.mp4", 
+"received_1475609625959831.mp4", 
+"received_1565752966937412.mp4", 
+"received_1733812675_edit371749224.mp4", 
+"received_205477100805479.mp4", 
+"received_209747920078599.mp4", 
+"received_2622532191330673.mp4", 
+"received_2762415560713349.mp4", 
+"received_276651987002020.mp4", 
+"received_302273217882698.mp4", 
+"received_306122727370878.mp4", 
+"received_3146129692103593.mp4", 
+"received_318649399161968.mp4", 
+"received_319142782631936.mp4", 
+"received_330743121258474.mp4", 
+"received_3308326075855724.mp4", 
+"received_3460210550676891.mp4", 
+"received_3755747254440660.mp4", 
+"received_398812524415372.mp4", 
+"received_467568450709177.mp4", 
+"received_483353735837112(1).mp4", 
+"received_483353735837112.mp4", 
+"received_571452243541313.mp4", 
+"received_571661863532313.mp4", 
+"received_582418739099072.mp4", 
+"received_610954536272815.mp4", 
+"received_616810892529772.mp4", 
+"received_625020931697946.mp4", 
+"received_675298590004612.mp4", 
+"received_701215927102379.mp4", 
+"received_710502919521292.mp4", 
+"received_715709769281832.mp4", 
+"received_764488561005824.mp4", 
+"received_791727904698777.mp4", 
+"received_847901992285261.mp4", 
+"received_902467676829038.mp4", 
+"SayUncle-Gay-Porn-XNXXVN_CO_0.mp4", 
+"Sex-motel-bareback-Latino.mp4", 
+"sgchatfiles-bldimg-com-chatfiles-videos-1085962.mp4", 
+"sgchatfiles-bldimg-com-chatfiles-videos-1463394(1).mp4", 
+"sgchatfiles-bldimg-com-chatfiles-videos-1463394.mp4", 
+"sgchatfiles-bldimg-com-chatfiles-videos-2425979.mp4", 
+"sgchatfiles-bldimg-com-chatfiles-videos-2593896.mp4", 
+"Sixnus_vua_choi_gai_vua_bu_cac_trai.mp4", 
+"Small-gay-sex-free-videos-gay-land-boy-pictures.mp4", 
+"Snapsave-app_357244723_936185864351481_21814720.mp4", 
+"SnapSave_App_267333076049910_1080p2.mp4", 
+"SnapSave_App_748274670620958_1080p.mp4", 
+"Sung-suong-cung-hotboy.mp4", 
+"This-is-best-fuck-clips-of-korea-movie-XNXX_C.mp4", 
+"Trai-cong-so-dap-nat-lol.mp4", 
+"tro-duyen-cho-nguoi.mp4", 
+"tronhoconhalamtinh-DoodStream_0.mp4", 
+"Twinks-in-iran-Alexander-Syden-and-Josh-Dixon-b.mp4", 
+"VID_20240713_183337_713.mp4", 
+"VID_20240713_183653_099.mp4", 
+"VID_20240713_183653_422.mp4", 
+"VID_20240713_183653_904.mp4", 
+"VID_20240713_184225_306.mp4", 
+"VID_20240717_125031_619.mp4", 
+"VID_20240717_125052_758.mp4", 
+"VID_20240717_125124_562.mp4", 
+"VID_20240717_125218_542.mp4", 
+"VID_20240717_125251_892.mp4", 
+"VID_20240717_125338_540.mp4", 
+"VID_20240717_130314_534.mp4", 
+"VID_20240717_130430_357.mp4", 
+"VID_20240717_130812_724.mp4", 
+"VID_20240717_131634_924.mp4", 
+"VID_20240717_131707_316.mp4", 
+"VID_20240717_131718_921.mp4", 
+"VID_20240717_132812_011.mp4", 
+"VID_20240717_133241_200.mp4", 
+"VID_20240717_133250_549.mp4", 
+"VID_20240717_133302_816.mp4", 
+"VID_20240717_133316_287.mp4", 
+"VID_20240717_133337_224.mp4", 
+"VID_20240717_133422_623.mp4", 
+"VID_20240717_133431_792.mp4", 
+"VID_20240717_133504_308.mp4", 
+"VID_20240813_031435_553.mp4", 
+"VID_20240813_031616_735.mp4", 
+"VID_20240813_031844_248.mp4", 
+"watch-moivies18-visit-googl-hUcbNG.mp4", 
+"X2Twitter-com_1820839387321556992(1280p).mp4", 
+"X2Twitter-com_1820839519760900096(1280p).mp4", 
+"XEMPHIMGAYCuchotClipemhocsinhmoilonohn.mp4", 
+"XEMPHIMGAYVietsub-NamsinhDaiTrung18tuoi.mp4", 
+"XNXX_es_el_cumpleanos_de_mi_novio_y_le_tengo_una_sorpresa_encantadora_parte_1_360p.mp4", 
+"XNXX_han_quoc_360p.mp4", 
+"XNXX_korean_girl_with_bf_360p.mp4", 
+"XNXX_korean_sex_360p.mp4", 
+"XNXX_lam_tinh_voi_trai_tre_360p.mp4", 
+"XNXX_porno_casero_real_de_latinos_jovenes_cachondos_y_apasionados_360p.mp4", 
+"XNXX_real_homemade_korean_amature_couple_sex_part_2_360p.mp4", 
+"XNXX_sex_movie_360p(1).mp4", 
+"XNXX_sex_movie_360p(2).mp4", 
+"XNXX_sex_movie_360p(3).mp4", 
+"XNXX_sex_movie_360p(4).mp4", 
+"XNXX_sex_movie_360p(5).mp4", 
+"XNXX_sex_movie_360p(6).mp4", 
+"XNXX_sex_movie_360p.mp4", 
+"xvideos-com_18dd491c3395159166d899127697c647.mp4", 
+"xvideos-com_24156af0e7da1785b05b7b8411557a18-1.mp4", 
+"xvideos-com_4ab2a2998909681b2dc3456f40e92e87.mp4", 
+"xvideos-com_54b8e9b9edee157b710fb88831e7e18d.mp4", 
+"xvideos-com_6675418bfaa63a514544f74dbf8fe833.mp4", 
+"xvideos-com_6beb5ac2b0cc7083fabb990030be06db.mp4", 
+"xvideos-com_6f31fe252b32aed0cb169c398d520d03.mp4", 
+"xvideos-com_8257c2b3c8146e3d3173f75f227c5dd4.mp4", 
+"xvideos-com_91046f9b2c4fc7908f8f19248b9e3989-1.mp4", 
+"xvideos-com_a50eb6fb5838b95574d1c5e63878273d.mp4", 
+"xvideos-com_bb86724cac0e160c054b728445da9247.mp4", 
+"xvideos-com_bd30c078e5c619aa45aa75fb4e25f958-1.mp4", 
+"xvideos-com_c3bceac7f6864bc222e0c92dc9d2341f.mp4", 
+"xvideos-com_c7ed06461382b187290128ce82fd3bc9.mp4", 
+"xvideos-com_cfbd9fd7b4c059eb4320074d29bedddb.mp4", 
+"xvideos-com_d47e440dc6ff64258efbe1e915ac9e8a.mp4", 
+"xvideos-com_dc264ba30e83fec772a5f08d1f4d19ba-1.mp4", 
+"xvideos-com_e43c53aacda41a2c241d8200dfd5e95e.mp4", 
+"xvideos-com_e5c3cb0653d9389b937a4b6a8cc4f190.mp4", 
+"xvideos-com_e6d8ad7dcc66e4a194d2bff9357c5fb0.mp4", 
+"xvideos-com_f798f5cea8e079e7d6dfc7fb1d8423a4.mp4", 
+"xvideos-com_fba57e4c9c2c2870fbc089833d411b41.mp4", 
+"Young-gay-twinks-suck-and-rim-XNXXVN_CO_0.mp4", 
+"Young-muscle-twinks-get-fucked-passionate-gay-m.mp4", 
+"_5mz77azge0.z3hAlOH0MT.mp4", 
+"_ajglqsxzxu-RujW48dOBB.mp4", 
+"Ơ-suong-qua-link-ful.mp4", 
+"【国产】麻豆传媒出品必属精品(1).mp4", 
+"【国产】麻豆传媒出品必属精品.mp4", 
+"【国产】麻豆传媒出品必属精品3.mp4", 
+"【国产】麻豆传媒出品必属精品4.mp4", 
+"【国产】麻豆传媒出品必属精品5.mp4", 
+"你永远不知道你的亚索队友在干嘛.mp4", 
+"动感光波动感光波视频资源跟各种超帅弟.mp4", 
+"南王s第部《四月公0来临》需要QQ28.mp4", 
+"巨根猛一激操小奶狗简直就是视觉享受小.mp4", 
+"换了新手机推特才下载好快一个月没发.mp4", 
+"浪老师民宿4P淫乱啪.mp4", 
+"足球帅哥挨艹记最终弹：AB两个骚逼踢完球.mp4", 
+"重温经典帅气顺丰快递小哥.mp4", 
+"非常火的一对情侣夫夫!1超级爱吃0鸡巴.mp4"
+    ];
+
+    const baseUrl = "https://ttttck.github.io/videox/";
+
+    const togglePopup = document.getElementById("togglePopup");
+    const grid = document.getElementById("videoGrid");
+
+    const mainPlayer = document.getElementById("mainPlayer");
+    const mainSource = document.getElementById("mainSource");
+
+    const popupWindow = document.getElementById("popupWindow");
+    const popupPlayer = document.getElementById("popupPlayer");
+    const popupSource = document.getElementById("popupSource");
+
+    function playVideo(file) {
+      const fullPath = baseUrl + file;
+
+      if (togglePopup.checked) {
+        popupWindow.style.display = "block";
+        popupSource.src = fullPath;
+        popupPlayer.load();
+        popupPlayer.play();
+      } else {
+        popupWindow.style.display = "none";
+        popupPlayer.pause();
+        mainSource.src = fullPath;
+        mainPlayer.load();
+        mainPlayer.play();
+      }
+    }
+
+    videoList.forEach(filename => {
+      const videoEl = document.createElement("video");
+      videoEl.className = "video-thumb";
+      videoEl.src = baseUrl + filename;
+      videoEl.setAttribute("muted", "true");
+      videoEl.setAttribute("playsinline", "true");
+      videoEl.setAttribute("preload", "metadata");
+      videoEl.dataset.clicked = "0";
+
+      videoEl.addEventListener("click", () => {
+        const clicked = parseInt(videoEl.dataset.clicked, 10);
+
+        if (clicked === 0) {
+          videoEl.dataset.clicked = "1";
+          videoEl.currentTime = 0;
+          videoEl.playbackRate = 5.0;
+          videoEl.muted = true; // Đảm bảo tắt tiếng
+          videoEl.play();
+        } else {
+          playVideo(filename);
+        }
+      });
+
+      grid.appendChild(videoEl);
+    });
+
+    togglePopup.addEventListener("change", () => {
+      if (!togglePopup.checked) {
+        popupWindow.style.display = "none";
+        popupPlayer.pause();
+      }
+    });
+  </script>
+</body>
+</html>
